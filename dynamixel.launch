@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Dynamixel Motor Controller Launch File -->
+    
+    <!-- Serial port configuration (can be overridden) -->
+    <arg name="port" default="/dev/ttyUSB0"/>
+    <arg name="baudrate" default="57600"/>
+    
+    <!-- Dynamixel motor node -->
+    <node name="eagle_actuator_controller" 
+          pkg="eagle_actuator_controller" 
+          type="dynamixel_node.py" 
+          output="screen">
+        <param name="port" value="$(arg port)"/>
+        <param name="baudrate" value="$(arg baudrate)"/>
+    </node>
+</launch>

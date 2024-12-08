@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>eagle_actuator_controller</name>
+  <version>0.1.0</version>
+  <description>ROS node for Dynamixel motor control</description>
+  
+  <maintainer email="e0176277@u.nus.edu">Neow Bo Kai</maintainer>
+  <license>BSD</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  
+  <exec_depend>dynamixel-sdk</exec_depend>
+</package>
