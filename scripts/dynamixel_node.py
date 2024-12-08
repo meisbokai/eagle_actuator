@@ -67,38 +67,36 @@ class DynamixelROSNode:
         )
 
         # ROS subscribers
-        rospy.Subscriber('motor_0_torque', Float64, lambda msg: self.current_callback(0, msg))
-        rospy.Subscriber('motor_1_torque', Float64, lambda msg: self.current_callback(1, msg))
+        rospy.Subscriber('motor_0_torque', Float64, lambda msg: self.torque_callback(0, msg))
+        rospy.Subscriber('motor_1_torque', Float64, lambda msg: self.torque_callback(1, msg))
         rospy.Subscriber('motor_2_grip', Bool, self.position_callback)
 
         # Periodic sync write timer
         self.sync_timer = rospy.Timer(rospy.Duration(0.05), self.sync_write_commands)
 
-    def _map_torque_to_current(self, motor_id, torque):
+    def _torque_to_current(self, torque):
         """
         Map torque input to motor current.
+        Current = 0.552 tau + 0.145
         
         Args:
-            motor_id (int): Motor ID
-            torque (float): Desired torque (-1.0 to 1.0)
+            torque (float): Desired torque 
         
         Returns:
-            int: Mapped current in mA
+            current (float): Required current
         """
-        config = self.motor_config[motor_id]
-        
-        # Clamp torque between -1.0 and 1.0
-        clamped_torque = max(-1.0, min(1.0, torque))
-        
-        # Linear mapping to current range
-        min_current, max_current = config['current_range']
-        return int(clamped_torque * (max_current - min_current) / 2)
+        # Precalculated relation
+        current = 0.552*torque + 0.145
 
-    def current_callback(self, motor_id, msg):
-        """Callback for current-controlled motors."""
+        # TODO: Add filtering if required
+        filtered_current = current
+        return filtered_current
+
+    def torque_callback(self, motor_id, msg):
+        """Callback for torque-controlled motors."""
         try:
             # Map torque to current
-            current = self._map_torque_to_current(motor_id, msg.data)
+            current = self._map_torque_to_current(msg.data)
             self.motor_targets[motor_id] = current
             rospy.logdebug(f"Motor {motor_id} target current: {current} mA")
         except Exception as e:
